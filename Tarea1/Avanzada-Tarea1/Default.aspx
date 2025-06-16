@@ -1,44 +1,100 @@
-﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Avanzada_Tarea1._Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Avanzada_Tarea1.Default" %>
 
-<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+<!DOCTYPE html>
 
-    <main>
-        <section class="row" aria-labelledby="aspnetTitle">
-            <h1 id="aspnetTitle">ASP.NET</h1>
-            <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-            <p><a href="http://www.asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-        </section>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Suscribirse al boletín</title>
+    <script src="Scripts/jquery-3.7.0.min.js"></script>
+    <link href="Content/Site.css" rel="stylesheet" />
+</head>
+<body>
+    <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
 
-        <div class="row">
-            <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-                <h2 id="gettingStartedTitle">Getting started</h2>
-                <p>
-                    ASP.NET Web Forms lets you build dynamic websites using a familiar drag-and-drop, event-driven model.
-                A design surface and hundreds of controls and components let you rapidly build sophisticated, powerful UI-driven sites with data access.
-                </p>
-                <p>
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301948">Learn more &raquo;</a>
-                </p>
-            </section>
-            <section class="col-md-4" aria-labelledby="librariesTitle">
-                <h2 id="librariesTitle">Get more libraries</h2>
-                <p>
-                    NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.
-                </p>
-                <p>
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301949">Learn more &raquo;</a>
-                </p>
-            </section>
-            <section class="col-md-4" aria-labelledby="hostingTitle">
-                <h2 id="hostingTitle">Web Hosting</h2>
-                <p>
-                    You can easily find a web hosting company that offers the right mix of features and price for your applications.
-                </p>
-                <p>
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301950">Learn more &raquo;</a>
-                </p>
-            </section>
-        </div>
-    </main>
+        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+            <ContentTemplate>
+                <div class="form-container">
+                    <h2>Suscribirse al boletín</h2>
+                    <div class="form-group">
+                        <label for="txtName">Nombre:</label>
+                        <asp:TextBox ID="txtName" runat="server" CssClass="form-control"></asp:TextBox>
+                        <span id="nameError" class="error-message">El nombre es obligatorio.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtEmail">Correo Electrónico:</label>
+                        <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control"></asp:TextBox>
+                        <span id="emailError" class="error-message">El correo electrónico es obligatorio y debe ser válido.</span>
+                    </div>
+                    <asp:Button ID="btnSubmit" runat="server" Text="Suscribirse" OnClick="btnSubmit_Click" />
+                </div>
 
-</asp:Content>
+                <div class="data-table-container">
+                    <h3>Datos Registrados</h3>
+                    <asp:Literal ID="litData" runat="server"></asp:Literal>
+                </div>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            // Validación del formulario con jQuery
+            $('#<%= btnSubmit.ClientID %>').click(function (e) {
+                var isValid = true;
+
+                // Validar Nombre
+                var name = $('#<%= txtName.ClientID %>').val().trim();
+                if (name === '') {
+                    $('#nameError').show();
+                    isValid = false;
+                } else {
+                    $('#nameError').hide();
+                }
+
+                // Validar Correo Electrónico
+                var email = $('#<%= txtEmail.ClientID %>').val().trim();
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (email === '' || !emailRegex.test(email)) {
+                    $('#emailError').show();
+                    isValid = false;
+                } else {
+                    $('#emailError').hide();
+                }
+
+                if (!isValid) {
+                    e.preventDefault(); // Previene el envío del formulario si la validación falla
+                }
+            });
+
+            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+                $('#<%= btnSubmit.ClientID %>').off('click').on('click', function (e) {
+                    var isValid = true;
+
+                    var name = $('#<%= txtName.ClientID %>').val().trim();
+                    if (name === '') {
+                        $('#nameError').show();
+                        isValid = false;
+                    } else {
+                        $('#nameError').hide();
+                    }
+
+                    var email = $('#<%= txtEmail.ClientID %>').val().trim();
+                    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (email === '' || !emailRegex.test(email)) {
+                        $('#emailError').show();
+                        isValid = false;
+                    } else {
+                        $('#emailError').hide();
+                    }
+
+                    if (!isValid) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
